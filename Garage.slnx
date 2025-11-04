@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".gitignore" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/API/API.csproj" Id="626b2adb-94df-468b-ac91-dca29a1503e0" />
+    <Project Path="src/Application/Application.csproj" Id="cc2474fd-4811-420a-a295-42a0ff7aa07b" />
+    <Project Path="src/Domain/Domain.csproj" Id="64f0071a-d3e6-4c60-b667-cbc10d866867" />
+    <Project Path="src/Infrastructure/Infrastructure.csproj" Id="4056edd0-d32b-4e05-8558-9cdc59da92ed" />
+  </Folder>
+</Solution>
