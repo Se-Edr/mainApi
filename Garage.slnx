@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/Benchmarks/">
+    <Project Path="Benchmarks/Benchmarks_Application/Benchmarks_Application.csproj" Id="63839052-4688-4d0d-b711-6c1ce8083396" />
+  </Folder>
   <Folder Name="/Solution Items/">
     <File Path=".gitignore" />
   </Folder>
@@ -7,5 +10,8 @@
     <Project Path="src/Application/Application.csproj" Id="cc2474fd-4811-420a-a295-42a0ff7aa07b" />
     <Project Path="src/Domain/Domain.csproj" Id="64f0071a-d3e6-4c60-b667-cbc10d866867" />
     <Project Path="src/Infrastructure/Infrastructure.csproj" Id="4056edd0-d32b-4e05-8558-9cdc59da92ed" />
+  </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="Tests/Tests_Application/Tests_Application.csproj" Id="6b72faf8-18e5-4b61-83f7-f467880b78e3" />
   </Folder>
 </Solution>

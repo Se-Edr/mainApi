@@ -8,17 +8,79 @@ namespace Application.Services
 {
     public class PhotoResizerService
     {
-        public async Task<MemoryStream> ResizeImage(MemoryStream origStream)
+        long maxSize = 1000000;
+
+        public void ResizeImageWithTwoStreams(Stream input, Stream output)
         {
-            long maxSize = 1000000;
+            if (output == null || input == null)
+            {
+                throw new ArgumentNullException("some of streams is empty");
+            }
+
+            using var image = Image.Load(input);
+            long startPos=output.Position;
+            image.Save(output,new JpegEncoder { Quality=90});
+            long savedSize = output.Position - startPos;
+            if(savedSize < maxSize)
+            {
+                return;
+            }
+
+
+        }
+       
+        public  void ResizeImage(Stream origStream, Stream outputStream)
+        {
+            if (origStream == null || outputStream == null)
+            {
+                throw new ArgumentNullException("some stream  is empty");
+            }
+
+            double scaler = 1;
+            
+            Image currentImage= Image.Load(origStream);
+
+            outputStream.Position = 0;
+            outputStream.SetLength(0);
+            
+            currentImage.Save(outputStream, new JpegEncoder());
+
+
+            for (int i = 0; i < 10; i++)
+            {
+                if(outputStream.Length < maxSize)
+                {
+                    break;
+                }
+
+                double div = (double)maxSize / outputStream.Length;
+                scaler =Math.Sqrt(div);
+
+                var newImage = UsingScale(scaler, currentImage);
+
+                currentImage.Dispose();
+
+                outputStream.SetLength(0);
+                outputStream.Position = 0;
+
+                currentImage = newImage;
+                currentImage.Save(outputStream, new JpegEncoder());
+
+            }
+            outputStream.Position = 0;
+        }
+
+        public Stream ResizeImage_Old(Stream origStream)
+        {
+            
             double scaler = 1;
 
-            var origImg = Image.Load(origStream);
+            Image? origImg = Image.Load(origStream);
 
             Image currentImage = origImg.Clone(x => x.Resize(origImg.Width, origImg.Height));
             long currentSize = origStream.Length;
 
-            MemoryStream mainStream = new MemoryStream(origStream.ToArray(), true);
+            Stream mainStream = origStream;
 
             try
             {
@@ -26,7 +88,7 @@ namespace Application.Services
                 {
                     if (mainStream.Length < maxSize)
                     {
-                        return new MemoryStream(mainStream.ToArray());
+                        return mainStream;
                     }
                     //currentImage.Save(mainStream, new JpegEncoder());
                     double div = (double)maxSize / mainStream.Length;
@@ -35,21 +97,16 @@ namespace Application.Services
                     Image newImage = UsingScale(scaler, currentImage);
                     mainStream.SetLength(0);
                     mainStream.Position = 0;
-                    newImage.Save(mainStream,new JpegEncoder());
+                    newImage.Save(mainStream, new JpegEncoder());
                     currentImage = currentImage.Clone(x => x.Resize(newImage.Width, newImage.Height));
                 }
             }
             finally
             {
-                origImg?.Dispose();
-                currentImage?.Dispose();
-                currentImage = null;
-                mainStream.SetLength(0);
-                mainStream.Position = 0;
-                mainStream.Dispose();
-                origStream?.Dispose();
             }
         }
+
+
         public  async Task<MemoryStream> ResizeImageForMinio(MemoryStream originalStream)
         {
             long maxSize = 1000000;

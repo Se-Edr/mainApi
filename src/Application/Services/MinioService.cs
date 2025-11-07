@@ -30,7 +30,6 @@ namespace Application.Services
                     new Minio.DataModel.Args.BucketExistsArgs().WithBucket(_settings.Bucket));
                 if (!found)
                 {
-
                     return false;
                 }
                 return true;
@@ -79,19 +78,25 @@ namespace Application.Services
 
             string objectname = $"{_settings.MainFolder}/{photoId.ToString()}.jpg";
 
-            using var originalStream = new MemoryStream();
+            //using var originalStream = new MemoryStream();
 
-            await file.CopyToAsync(originalStream);
-            originalStream.Position = 0;
+            //await file.CopyToAsync(originalStream);
+            //originalStream.Position = 0;
 
-            using var resized = await _resizer.ResizeImage(originalStream);
-            resized.Position = 0;
+            //using MemoryStream resized = _resizer.ResizeImage(originalStream);
+            //resized.Position = 0;
+
+            using var inputStream = file.OpenReadStream();
+            using var outputStream = new MemoryStream();
+
+            _resizer.ResizeImage(inputStream,outputStream);
+
 
             await _minioClient.PutObjectAsync(new PutObjectArgs()
             .WithBucket(_settings.Bucket)
             .WithObject(objectname)
-            .WithStreamData(resized)
-            .WithObjectSize(resized.Length)
+            .WithStreamData(outputStream)
+            .WithObjectSize(outputStream.Length)
             .WithContentType("image/jpeg")
             );
 

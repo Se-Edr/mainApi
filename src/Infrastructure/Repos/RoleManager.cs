@@ -21,7 +21,7 @@ namespace Infrastructure.Repos
             AppRole role =await _context.RolesTable.FirstOrDefaultAsync(r=>r.NormalizedRoleName.Equals(roleToAdd.ToUpper()));
             if (role==null)
             {
-                throw new Exception(); // role not Found
+                throw new ArgumentNullException("role not Found"); 
             }
 
             //Guid.Parse();

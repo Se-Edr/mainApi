@@ -137,7 +137,7 @@ namespace Infrastructure.Repos
 
             if(car == null)
             {
-                throw new Exception();
+                throw new ArgumentNullException("Car is null");
             }
             car.CarQRCode = qrCode;
             await _garageCont.SaveChangesAsync();
